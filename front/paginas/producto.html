@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalle del Producto - Tienda Online</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="../estilos/estilos.css">
+</head>
+<body class="bg-light">
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <div class="container">
+        <a class="navbar-brand" href="/paginas/dashboard.html">Tienda Online</a>
+        <a href="/paginas/dashboard.html" class="btn btn-outline-light btn-sm me-2">Dashboard</a>
+        <a href="javascript:history.back()" class="btn btn-outline-light btn-sm me-2">Volver</a>
+        
+        <a href="/paginas/carrito.html" class="btn btn-outline-light position-relative me-2" id="cart-button-nav">
+            <i class="bi bi-cart"></i> Carrito
+            <span id="cart-count-badge" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="display: none;">
+                0
+            </span>
+        </a>
+        
+        <button class="btn btn-light" id="logoutBtn">Cerrar Sesión</button>
+    </div>
+</nav>
+
+<div class="container mt-4">
+    
+    <div id="loading-spinner" class="text-center">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Cargando...</span>
+        </div>
+        <p class="mt-2">Cargando producto...</p>
+    </div>
+
+    <div id="product-detail-container" class="row d-none">
+        
+        <div class="col-md-6">
+            <img id="product-image" src="" class="img-fluid rounded shadow" alt="Imagen del producto" style="max-height: 500px; object-fit: cover; width: 100%;">
+        </div>
+
+        <div class="col-md-6">
+            <h2 id="product-title" class="text-primary"></h2>
+            <h3 id="product-price" class="text-success mb-3"></h3>
+            
+            <p id="product-description" class="text-muted"></p>
+            
+            <button class="btn btn-primary btn-lg mt-3" id="add-to-cart-btn">
+                Añadir al Carrito
+            </button>
+        </div>
+    </div>
+    
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="../js/producto.js"></script>
+</body>
+</html>

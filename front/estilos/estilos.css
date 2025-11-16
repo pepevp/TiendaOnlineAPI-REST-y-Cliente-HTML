@@ -1,0 +1,32 @@
+/* custom.css - Estilos personalizados de la tienda */
+
+/* Fondo de la página */
+body {
+    background-color: #f8f9fa; /* gris claro */
+}
+
+/* Tarjetas de login y productos */
+.card {
+    border-radius: 1rem;
+}
+
+/* Botones personalizados */
+.btn-primary {
+    background-color: #0d6efd;
+    border: none;
+}
+
+.btn-primary:hover {
+    background-color: #0b5ed7;
+}
+
+/* Mensajes de error */
+#mensaje {
+    font-weight: bold;
+}
+
+/* Ajustes de espaciado en el dashboard o tarjetas */
+.card-body h5 {
+    font-size: 1.1rem;
+    margin-bottom: 0.5rem;
+}

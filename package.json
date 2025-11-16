@@ -1,0 +1,24 @@
+{
+  "name": "tiendaonlineapi-rest-y-cliente-html",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pepevp/TiendaOnlineAPI-REST-y-Cliente-HTML.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/pepevp/TiendaOnlineAPI-REST-y-Cliente-HTML/issues"
+  },
+  "homepage": "https://github.com/pepevp/TiendaOnlineAPI-REST-y-Cliente-HTML#readme",
+  "description": "",
+  "dependencies": {
+    "bootstrap": "^5.3.8",
+    "express": "^5.1.0"
+  }
+}
