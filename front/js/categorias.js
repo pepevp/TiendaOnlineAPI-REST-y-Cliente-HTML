@@ -9,6 +9,7 @@ import {
     verProducto 
 } from './app2.js';
 
+// --- CORRECCIÓN CLAVE ---
 // Asignar funciones al objeto global 'window' para que los 'onclick' del HTML funcionen
 window.agregarAlCarrito = agregarAlCarrito;
 window.verProducto = verProducto;

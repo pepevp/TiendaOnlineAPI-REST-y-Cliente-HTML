@@ -147,5 +147,5 @@ export function verProducto(productId) {
     setLocalStorage(VISTOS_KEY, vistos);
     console.log(`Producto ${productId} registrado como visto.`);
     
-    window.location.href = `/paginas/product.html?id=${productId}`;
+    window.location.href = `/paginas/producto.html?id=${productId}`;
 }
