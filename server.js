@@ -12,7 +12,6 @@ app.use(express.json());
 const frontPath = path.join(__dirname, 'front');
 
 // --- ROOT (CORRECCIÓN DE ORDEN) ---
-// Esta ruta específica para '/' DEBE ir ANTES del app.use(express.static)
 app.get('/', (req, res) => {
     res.redirect('/paginas/login.html');
 });
@@ -39,33 +38,23 @@ app.post('/auth/login', (req, res) => {
     const user = usuarios.find(u => u.usuario === usuario && u.password === password);
 
     if (user) {
-        // --- LECTURA DE ARCHIVOS SEPARADOS (SINCRONIZADO CONTIGO) ---
-        const productosPath = path.join(__dirname, 'back', 'data', 'productos.json');
-        const categoriasPath = path.join(__dirname, 'back', 'data', 'categorias.json');
-
-        let productos = [];
-        let categorias = [];
+        // --- CAMBIO: LEER UN SOLO ARCHIVO 'tienda.json' ---
+        const tiendaPath = path.join(__dirname, 'back', 'data', 'tienda.json');
+        let tiendaData = { productos: [], categorias: [] };
 
         try {
-            if (fs.existsSync(productosPath)) {
-                // Leemos el JSON y accedemos a la clave "productos"
-                const dataProductos = JSON.parse(fs.readFileSync(productosPath, 'utf-8'));
-                productos = dataProductos.productos || [];
-            }
-            if (fs.existsSync(categoriasPath)) {
-                // Leemos el JSON y accedemos a la clave "categorias"
-                const dataCategorias = JSON.parse(fs.readFileSync(categoriasPath, 'utf-8'));
-                categorias = dataCategorias.categorias || [];
+            if (fs.existsSync(tiendaPath)) {
+                tiendaData = JSON.parse(fs.readFileSync(tiendaPath, 'utf-8'));
             }
         } catch (e) {
-            console.error('Advertencia: Error al leer productos.json o categorias.json.', e);
+            console.error('Advertencia: Error al leer tienda.json.', e);
         }
 
         res.json({
             success: true, 
             token: 'MiTokenSuperSecreto123', 
-            productos: productos, 
-            categorias: categorias
+            productos: tiendaData.productos || [], // Devolvemos la clave 'productos'
+            categorias: tiendaData.categorias || [] // Devolvemos la clave 'categorias'
         });
     } else {
         res.json({ success: false, mensaje: 'Usuario o contraseña incorrectos' });
@@ -73,25 +62,25 @@ app.post('/auth/login', (req, res) => {
 });
 
 
-// --- (NUEVO) ENDPOINT DE VALIDACIÓN DE CARRITO ---
+// --- ENDPOINT DE VALIDACIÓN DE CARRITO ---
 app.post('/api/validar-carrito', (req, res) => {
     console.log("Recibida petición para validar carrito...");
 
-    // 1. Validación de Token (Requisito de seguridad)
+    // 1. Validación de Token
     const authHeader = req.headers['authorization'];
-    const token = authHeader && authHeader.split(' ')[1]; // Formato "Bearer TOKEN"
+    const token = authHeader && authHeader.split(' ')[1]; 
 
     if (token !== 'MiTokenSuperSecreto123') {
         return res.status(401).json({ success: false, mensaje: 'Error de autenticación: Token no válido.' });
     }
 
-    // 2. Cargar precios reales del servidor
-    const productosPath = path.join(__dirname, 'back', 'data', 'productos.json');
+    // 2. Cargar precios reales del servidor (LEYENDO DE TIENDA.JSON)
+    const tiendaPath = path.join(__dirname, 'back', 'data', 'tienda.json');
     let productosServidor = [];
     try {
-        if (fs.existsSync(productosPath)) {
-            const dataProductos = JSON.parse(fs.readFileSync(productosPath, 'utf-8'));
-            productosServidor = dataProductos.productos || [];
+        if (fs.existsSync(tiendaPath)) {
+            const tiendaData = JSON.parse(fs.readFileSync(tiendaPath, 'utf-8'));
+            productosServidor = tiendaData.productos || [];
         }
     } catch (e) {
         return res.status(500).json({ success: false, mensaje: 'Error interno al verificar productos.' });
@@ -103,7 +92,7 @@ app.post('/api/validar-carrito', (req, res) => {
         return res.status(400).json({ success: false, mensaje: 'Formato de carrito incorrecto.' });
     }
 
-    // 4. Lógica de Validación de Precios (Requisito clave)
+    // 4. Lógica de Validación de Precios
     let precioManipulado = false;
     let productoManipulado = '';
 
@@ -116,7 +105,6 @@ app.post('/api/validar-carrito', (req, res) => {
             break;
         }
         
-        // ¡LA VALIDACIÓN! Comparamos el precio del cliente con el precio real
         if (itemCliente.price !== productoReal.precio) {
             precioManipulado = true;
             productoManipulado = `${productoReal.nombre} (Cliente: $${itemCliente.price} vs Servidor: $${productoReal.precio})`;
@@ -133,7 +121,6 @@ app.post('/api/validar-carrito', (req, res) => {
         });
     } else {
         console.log("VALIDACIÓN EXITOSA: Todos los precios son correctos.");
-        // Aquí iría la lógica para guardar el pedido en la base de datos, etc.
         return res.json({ 
             success: true, 
             mensaje: '¡Pedido validado! Compra realizada con éxito.' 

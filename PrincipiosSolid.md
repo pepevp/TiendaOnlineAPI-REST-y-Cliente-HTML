@@ -1,66 +1,89 @@
+🧩 Aplicación de Principios SOLID en el Proyecto
 
----
+A continuación se explica cómo se aplican los principios SOLID dentro de la arquitectura del proyecto, y por qué mejoran la mantenibilidad, escalabilidad y claridad del código.
 
-## 2. Flujo de Datos
+📌 1. Principio de Responsabilidad Única (SRP)
 
-1. **Login**
-   - Usuario ingresa nombre y contraseña.
-   - Envío al backend (`back/auth/login.php`).
-   - Backend valida y devuelve token + información completa de la tienda.
-   - Se guarda en **LocalStorage**:
-     - `token`
-     - `tienda` (productos y categorías)
+Qué significa:
+Cada módulo debe tener una sola razón para cambiar. Una responsabilidad, un propósito.
 
-2. **Dashboard, Categorías y Producto**
-   - Se cargan datos desde LocalStorage.
-   - Cada sección verifica que el **token** existe antes de mostrar información.
-   - Los productos destacados, categorías y productos vistos recientemente se muestran dinámicamente.
+Cómo lo aplicamos en el proyecto:
+Antes había un app.js gigante que manejaba login, dashboard, carrito, detalles de producto… todo a la vez.
+Ahora:
 
-3. **Carrito**
-   - Productos añadidos al carrito se guardan en `localStorage.carrito`.
-   - Al realizar la compra, se envía al backend (`back/api/carrito.php`) con token.
-   - Backend valida que los precios no hayan sido manipulados.
-   - Si todo correcto, carrito se vacía.
+login.js → solo gestiona la autenticación.
 
-4. **Productos Vistos Recientemente**
-   - Cada producto visualizado se guarda en `localStorage.productos_vistos`.
-   - Se muestran como recomendaciones en el dashboard o carrito.
-   - Se limita a los últimos 5 productos.
+cart.js → solo gestiona el carrito.
 
----
+dashboard.js → solo gestiona los productos destacados.
 
-## 3. Principios SOLID aplicados
+utils.js → contiene funciones reutilizables.
 
-1. **S - Single Responsibility Principle (SRP)**
-   - Cada script tiene una responsabilidad:
-     - `product.js`: mostrar detalle de producto y guardar productos vistos.
-     - `categories.js`: mostrar categorías y productos filtrados.
-     - `cart.js`: gestionar carrito y validar compra.
-     - `app.js`: login y dashboard.
+Beneficio:
+Si algo falla en el carrito, sabes exactamente qué archivo tocar. El código es más simple y más mantenible.
 
-2. **O - Open/Closed Principle (OCP)**
-   - Código diseñado para añadir nuevas funcionalidades sin modificar las existentes.  
-     - Ej.: se pueden agregar nuevas páginas o endpoints sin tocar login.js.
+📌 2. Principio de Abierto/Cerrado (OCP)
 
-3. **L - Liskov Substitution Principle (LSP)**
-   - Funciones como `agregarAlCarrito()` aceptan cualquier producto válido, garantizando consistencia.
+Qué significa:
+El software debe estar abierto a extensión, pero cerrado a modificación.
 
-4. **I - Interface Segregation Principle (ISP)**
-   - Cada módulo (login, carrito, productos) expone solo las funciones necesarias para su interacción.
+Cómo lo aplicamos:
+El archivo utils.js se mantiene estable: rara vez se toca.
+Si queremos añadir nueva funcionalidad, por ejemplo una página perfil.html:
 
-5. **D - Dependency Inversion Principle (DIP)**
-   - El frontend depende de interfaces (token + JSON de tienda) y no de implementaciones concretas del backend.
+Creamos perfil.js
 
----
+Importamos checkAuth(), handleLogout() o lo que necesitemos de utils.js
 
-## 4. Personalización de Bootstrap
+No tocamos ni login.js, ni dashboard.js, ni cart.js
 
-- Los estilos propios van en `front/estilos/custom.css`.
-- Se pueden sobreescribir variables de Bootstrap, colores, fuentes, etc.
-- Ejemplo: cambiar color de botón primario:
+Beneficio:
+El proyecto crece sin romper nada existente ni modificar código estable.
 
-```css
-.btn-primary {
-    background-color: #ff6600;
-    border-color: #ff6600;
-}
+📌 3. Principio de Segregación de Interfaces (ISP)
+
+Qué significa:
+Un módulo no debe depender de funciones que no utiliza.
+
+Cómo lo aplicamos:
+Antes:
+
+login.html cargaba un app.js enorme con funciones de carrito, productos, navegación… aunque no usaba nada de eso.
+
+Ahora:
+
+login.js solo importa las funciones que necesita (setLocalStorage, getLocalStorage, etc.).
+
+cart.js importa solo lo relacionado con el carrito.
+
+dashboard.js solo usa funciones de carga de tienda.
+
+Beneficio:
+Cada archivo es ligero, claro y no está “contaminado” de funciones innecesarias.
+
+📌 4. Principio de Inversión de Dependencias (DIP)
+
+Qué significa:
+Los módulos de alto nivel no deben depender de detalles de bajo nivel.
+Ambos deben depender de abstracciones.
+
+Cómo lo aplicamos:
+Ejemplo clave: el almacenamiento de datos.
+
+Ninguna página llama directamente a localStorage.getItem()
+
+En su lugar, todas dependen de una abstracción:
+
+loadStoreData()
+
+
+(y otras funciones de utils.js)
+
+Si mañana decidimos cambiar LocalStorage → SessionStorage, filesystem, o indexedDB:
+
+Solo modificamos utils.js
+
+Ninguna otra parte de la aplicación necesita ser cambiada
+
+Beneficio:
+El proyecto es más escalable y adaptable a cambios futuros.

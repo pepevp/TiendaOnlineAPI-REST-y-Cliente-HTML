@@ -1,0 +1,191 @@
+// front/estilos/estilos.scss
+
+// 1. IMPORTAR FUNCIONES Y VARIABLES DE BOOTSTRAP
+@import "../../node_modules/bootstrap/scss/functions"; 
+
+// =========================================================
+// 2. PERSONALIZACIÓN DE VARIABLES (CORREGIDO)
+// =========================================================
+
+// --- Colores de Marca ---
+$primary:       #D35400;  // NARANJA (ENERGÍA)
+$secondary:     #6c757d;  // GRIS MEDIO (Neutro, color de Bootstrap por defecto)
+$success:       #28a745;  // VERDE (POSITIVO)
+$danger:        #dc3545;  // ROJO (URGENCIA)
+$light:         #FFFFFF;  // BLANCO (LIMPIEZA)
+$dark:          #343a40;  // GRIS OSCURO (ELEGANCIA)
+
+// Definimos un color de fondo personalizado
+$body-bg:       #f8f9fa;  // GRIS MUY CLARO (ESPACIO)
+
+// Actualizamos el mapa de colores de Bootstrap
+$theme-colors: (
+  "primary": $primary,
+  "secondary": $secondary,
+  "success": $success,
+  "danger": $danger,
+  "light": $light,
+  "dark": $dark
+);
+
+// --- Tipografía (FUNCIONALIDAD) ---
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap');
+$font-family-sans-serif: 'Inter', sans-serif;
+$font-family-base:       $font-family-sans-serif;
+$font-weight-base:       400;
+$headings-font-weight:   700;
+
+// --- Componentes y Usabilidad (ATRACTIVO) ---
+$border-radius:          0.5rem;   // Bordes suaves y modernos.
+$spacer:                 1rem;     // Espaciado base consistente.
+$card-border-width:      0;        // Tarjetas sin bordes para un look más limpio
+
+// 2. Importar el resto de variables y mixins de Bootstrap
+@import "../../node_modules/bootstrap/scss/variables"; 
+// Sobrescribimos el fondo del body
+$body-bg: $body-bg;
+@import "../../node_modules/bootstrap/scss/mixins"; 
+@import "../../node_modules/bootstrap/scss/maps"; 
+
+// 3. Importar el CORE de Bootstrap
+@import "../../node_modules/bootstrap/scss/bootstrap"; 
+
+// =========================================================
+// 4. Estilos Propios (Animaciones y Efectos Visuales)
+// =========================================================
+
+// El fondo del body ya está definido por $body-bg
+body {
+    font-family: $font-family-base;
+    color: $dark; // Color de texto base
+}
+
+// Contenedor principal para centrar contenido en el login
+.login-container {
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+// Estilo de tarjeta de formularios
+.form-card {
+    background-color: $light;
+    padding: 2.5rem;
+    border-radius: $border-radius * 2; 
+    box-shadow: 0 10px 30px rgba($dark, 0.1);
+    min-width: 350px;
+}
+
+// Mensajes de error/éxito
+.message-box {
+    padding: $spacer;
+    margin-bottom: $spacer;
+    border-radius: $border-radius;
+    text-align: center;
+}
+
+.alert-error {
+    background-color: lighten($danger, 40%);
+    color: $danger;
+}
+
+
+// --- REQUISITO 7: DISEÑO ESPECTACULAR (TEMA NARANJA) ---
+
+// 1. Animación de entrada (Fade In)
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(15px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+// 2. Efecto de Hover en Tarjetas de Producto
+.card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border: 0; 
+    
+    &:hover {
+        transform: translateY(-5px); 
+        box-shadow: 0 10px 20px rgba($dark, 0.15); 
+    }
+}
+
+// 3. Efecto en Tarjetas de Categoría (Dashboard)
+.category-card {
+    // CORRECCIÓN: Usamos el $secondary (gris claro) del JS, pero
+    // aseguramos que el fondo de la tarjeta sea blanco ($light)
+    background-color: $light !important; 
+    border-bottom: 4px solid $primary; // Acento naranja
+    box-shadow: 0 5px 15px rgba($dark, 0.05); 
+    
+    .card-title {
+        transition: color 0.3s ease;
+        color: $dark; 
+    }
+
+    &:hover {
+        background-color: $primary !important; // Fondo naranja
+        transform: translateY(-5px) scale(1.02); 
+        
+        .card-title {
+            color: $light !important; // Texto blanco
+        }
+    }
+}
+
+// 4. Estilo para "Vistos Recientemente"
+.border-dashed-primary {
+    border: 2px dashed $primary; // Borde naranja
+    background-color: transparent;
+    transition: all 0.3s ease;
+
+    .card-title, .text-success, .btn { // (Añadido .btn a la transición)
+        transition: all 0.3s ease;
+    }
+
+    &:hover {
+        border-style: solid;
+        background-color: lighten($primary, 45%); // Fondo naranja muy claro (melocotón)
+
+        .card-title {
+            color: darken($primary, 15%); // Naranja oscuro para contraste
+        }
+        .text-success {
+            color: darken($success, 10%) !important; 
+        }
+
+        // --- CORRECCIÓN (Mantenida) ---
+        .btn-outline-primary {
+            background-color: $primary; // Fondo naranja
+            color: $light; // Texto blanco
+            border-color: $primary;
+        }
+    }
+}
+
+// 5. Aplicar la animación de entrada a las filas de contenido
+#productosDestacados,
+#categorias,
+#productosVistos,
+#category-product-list,
+#product-detail-container {
+    animation: fadeIn 0.5s ease-out forwards;
+}
+
+// 6. Ajuste de Contraste para la Navbar
+// La navbar ahora usa el $primary (naranja), nos aseguramos que los links destaquen
+.navbar-dark .navbar-brand {
+    font-weight: 700; // Título más fuerte
+}
+
+.btn-outline-light {
+    &:hover {
+        color: $primary; // Texto naranja al pasar el ratón sobre botones blancos
+    }
+}

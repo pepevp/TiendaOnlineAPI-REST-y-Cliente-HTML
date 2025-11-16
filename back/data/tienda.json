@@ -8,5 +8,10 @@
     {"id": 6, "nombre": "Sillón Reclinable", "precio": 450, "destacado": false, "id_categoria": 3, "imagen": "https://placehold.co/600x400/212529/white?text=Sill%C3%B3n"},
     {"id": 7, "nombre": "Auriculares Inalámbricos", "precio": 150, "destacado": false, "id_categoria": 1, "imagen": "https://placehold.co/600x400/3A53A4/white?text=Auriculares"},
     {"id": 8, "nombre": "Chaqueta de Cuero", "precio": 220, "destacado": true, "id_categoria": 2, "imagen": "https://placehold.co/600x400/E9ECEF/000?text=Chaqueta"}
+  ],
+  "categorias": [
+    {"id": 1, "nombre": "Electrónica"},
+    {"id": 2, "nombre": "Ropa"},
+    {"id": 3, "nombre": "Hogar"}
   ]
 }
