@@ -1,13 +1,13 @@
 {
   "productos": [
-    {"id": 1, "nombre": "Smartphone Galaxy", "precio": 350, "destacado": true, "id_categoria": 1, "imagen": "https://placehold.co/600x400/3A53A4/white?text=Smartphone"},
-    {"id": 2, "nombre": "Camiseta Básica Blanca", "precio": 20, "destacado": false, "id_categoria": 2, "imagen": "https://placehold.co/600x400/E9ECEF/000?text=Camiseta"},
-    {"id": 3, "nombre": "Cafetera Italiana", "precio": 55, "destacado": true, "id_categoria": 3, "imagen": "https://placehold.co/600x400/212529/white?text=Cafetera"},
-    {"id": 4, "nombre": "Laptop Pro 14in", "precio": 1200, "destacado": true, "id_categoria": 1, "imagen": "https://placehold.co/600x400/3A53A4/white?text=Laptop"},
-    {"id": 5, "nombre": "Jeans Slim Fit", "precio": 65, "destacado": false, "id_categoria": 2, "imagen": "https://placehold.co/600x400/E9ECEF/000?text=Jeans"},
-    {"id": 6, "nombre": "Sillón Reclinable", "precio": 450, "destacado": false, "id_categoria": 3, "imagen": "https://placehold.co/600x400/212529/white?text=Sill%C3%B3n"},
-    {"id": 7, "nombre": "Auriculares Inalámbricos", "precio": 150, "destacado": false, "id_categoria": 1, "imagen": "https://placehold.co/600x400/3A53A4/white?text=Auriculares"},
-    {"id": 8, "nombre": "Chaqueta de Cuero", "precio": 220, "destacado": true, "id_categoria": 2, "imagen": "https://placehold.co/600x400/E9ECEF/000?text=Chaqueta"}
+    {"id": 1, "nombre": "Smartphone Galaxy", "precio": 350, "destacado": true, "id_categoria": 1, "imagen": "/img/smartphone.png"},
+    {"id": 2, "nombre": "Camiseta Básica Blanca", "precio": 20, "destacado": false, "id_categoria": 2, "imagen": "/img/camisetaBlanca.png"},
+    {"id": 3, "nombre": "Cafetera Italiana", "precio": 55, "destacado": true, "id_categoria": 3, "imagen": "/img/cafetera.png"},
+    {"id": 4, "nombre": "Portátil Pro 14in", "precio": 1200, "destacado": false, "id_categoria": 1, "imagen": "/img/portatil.png"},
+    {"id": 5, "nombre": "Jeans Slim Fit", "precio": 65, "destacado": false, "id_categoria": 2, "imagen": "/img/vaqueros.png"},
+    {"id": 6, "nombre": "Sillón Reclinable", "precio": 450, "destacado": false, "id_categoria": 3, "imagen": "/img/sillon.png"},
+    {"id": 7, "nombre": "Auriculares Inalámbricos", "precio": 150, "destacado": false, "id_categoria": 1, "imagen": "/img/auriculares.png"},
+    {"id": 8, "nombre": "Chaqueta de Cuero", "precio": 220, "destacado": true, "id_categoria": 2, "imagen": "/img/chaqueta.png"}
   ],
   "categorias": [
     {"id": 1, "nombre": "Electrónica"},

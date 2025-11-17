@@ -53,7 +53,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 categoryProductListEl.innerHTML = filteredProducts.map(p => `
                     <div class="col-md-4 mb-3">
                         <div class="card h-100 shadow-sm border-0 rounded-lg">
-                            <img src="${p.imagen}" class="card-img-top" alt="${p.nombre}" style="height: 200px; object-fit: cover;">
+                            <img src="${p.imagen}" class="card-img-top" alt="${p.nombre}">
                             <div class="card-body d-flex flex-column">
                                 <h5 class="card-title text-primary">${p.nombre}</h5>
                                 <p class="card-text text-muted">Precio: $${p.precio}</p>
