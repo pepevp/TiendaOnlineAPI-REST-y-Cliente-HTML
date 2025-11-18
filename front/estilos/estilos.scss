@@ -8,7 +8,7 @@
 // =========================================================
 
 // --- Colores de Marca ---
-$primary:       #D35400;  // NARANJA (ENERGÍA)
+$primary:       #3965a7;  // NARANJA (ENERGÍA)
 $secondary:     #6c757d;  // GRIS MEDIO (Neutro, color de Bootstrap por defecto)
 $success:       #28a745;  // VERDE (POSITIVO)
 $danger:        #dc3545;  // ROJO (URGENCIA)
@@ -197,4 +197,8 @@ body {
     object-fit: contain;  // ⬅ NO recorta la imagen
     background-color: #fff;  // para que no quede vacío alrededor
     padding: 10px;        // opcional, visualmente mejor
+}
+
+.mt-section{
+    margin-top: 4rem;
 }

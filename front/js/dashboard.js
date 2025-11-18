@@ -42,7 +42,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (destacados.length > 0) {
             productosDestacadosDiv.innerHTML = destacados.map(p => `
                 <div class="col-md-4 mb-3">
-                    <div class="card h-100 shadow-sm border-0 rounded-lg">
+                    <div class="card shadow-sm border-0 rounded-lg">
                         <img src="${p.imagen}" class="card-img-top" alt="${p.nombre}">
                         <div class="card-body d-flex flex-column">
                             <h5 class="card-title text-primary">${p.nombre}</h5>
@@ -63,10 +63,11 @@ document.addEventListener('DOMContentLoaded', () => {
     // Renderizar categorías
     if (categoriasDiv) {
         categoriasDiv.innerHTML = categorias.map(c => `
-            <div class="col-md-3 mb-4">
+            <!-- Diseño Horizontal: 3 por fila en escritorio (col-md-4) -->
+            <div class="col-12 col-md-4 mb-4">
                 <div class="card text-center h-100 bg-secondary border-0 shadow-sm category-card rounded-lg">
                     <div class="card-body">
-                        <h5 class="card-title text-dark">${c.nombre}</h5>
+                        <h5 class="card-title text-dark mb-0">${c.nombre}</h5>
                         <a href="/paginas/categorias.html?id=${c.id}" class="stretched-link"></a>
                     </div>
                 </div>
@@ -85,7 +86,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (!p) return;
                 htmlContent += `
                     <div class="col-md-4 mb-3">
-                        <div class="card h-100 border-dashed-primary rounded-lg">
+                        <div class="card border-dashed-primary rounded-lg">
                             <div class="card-body p-3">
                                 <h6 class="card-title">${p.nombre}</h6>
                                 <small class="text-success">$${p.precio}</small>
