@@ -5,131 +5,116 @@ const fs = require('fs');
 const app = express();
 const PORT = 3000;
 
-// Middleware para parsear JSON
 app.use(express.json());
 
-// Ruta de la carpeta front
+// Carpeta FRONT
 const frontPath = path.join(__dirname, 'front');
+app.use(express.static(frontPath));
 
-// --- ROOT (CORRECCIÓN DE ORDEN) ---
+// ROOT
 app.get('/', (req, res) => {
     res.redirect('/paginas/login.html');
 });
 
-// Servir toda la carpeta front como estática
-app.use(express.static(frontPath));
+// ----------------------------------------------------------
+// TOKEN FIJO
+// ----------------------------------------------------------
+const TOKEN = 'MiTokenSuperSecreto123';
 
-// --- ENDPOINT LOGIN ---
+function validarToken(req, res, next) {
+    const authHeader = req.headers['authorization'];
+    if (!authHeader) return res.status(401).json({ success: false, mensaje: 'No se proporcionó token' });
+
+    if (authHeader !== `Bearer ${TOKEN}`) {
+        return res.status(403).json({ success: false, mensaje: 'Token inválido' });
+    }
+
+    next();
+}
+
+// ----------------------------------------------------------
+// LOGIN
+// ----------------------------------------------------------
 app.post('/auth/login', (req, res) => {
     const { usuario, password } = req.body;
 
     const usuariosPath = path.join(__dirname, 'back', 'data', 'usuarios.json');
     let usuarios = [];
-    
+
     try {
         if (fs.existsSync(usuariosPath)) {
             usuarios = JSON.parse(fs.readFileSync(usuariosPath, 'utf-8'));
         }
     } catch (e) {
-        console.error('Error al leer usuarios.json:', e);
-        return res.status(500).json({ success: false, mensaje: 'Error interno del servidor al leer usuarios.' });
+        return res.status(500).json({ success: false, mensaje: "Error interno leyendo usuarios." });
     }
 
     const user = usuarios.find(u => u.usuario === usuario && u.password === password);
 
-    if (user) {
-        // --- CAMBIO: LEER UN SOLO ARCHIVO 'tienda.json' ---
-        const tiendaPath = path.join(__dirname, 'back', 'data', 'tienda.json');
-        let tiendaData = { productos: [], categorias: [] };
-
-        try {
-            if (fs.existsSync(tiendaPath)) {
-                tiendaData = JSON.parse(fs.readFileSync(tiendaPath, 'utf-8'));
-            }
-        } catch (e) {
-            console.error('Advertencia: Error al leer tienda.json.', e);
-        }
-
-        res.json({
-            success: true, 
-            token: 'MiTokenSuperSecreto123', 
-            productos: tiendaData.productos || [], // Devolvemos la clave 'productos'
-            categorias: tiendaData.categorias || [] // Devolvemos la clave 'categorias'
-        });
-    } else {
-        res.json({ success: false, mensaje: 'Usuario o contraseña incorrectos' });
-    }
-});
-
-
-// --- ENDPOINT DE VALIDACIÓN DE CARRITO ---
-app.post('/api/validar-carrito', (req, res) => {
-    console.log("Recibida petición para validar carrito...");
-
-    // 1. Validación de Token
-    const authHeader = req.headers['authorization'];
-    const token = authHeader && authHeader.split(' ')[1]; 
-
-    if (token !== 'MiTokenSuperSecreto123') {
-        return res.status(401).json({ success: false, mensaje: 'Error de autenticación: Token no válido.' });
+    if (!user) {
+        return res.json({ success: false, mensaje: "Usuario o contraseña incorrectos" });
     }
 
-    // 2. Cargar precios reales del servidor (LEYENDO DE TIENDA.JSON)
+    // Leer tienda.json
     const tiendaPath = path.join(__dirname, 'back', 'data', 'tienda.json');
-    let productosServidor = [];
+    let tiendaData = { productos: [], categorias: [] };
+
     try {
         if (fs.existsSync(tiendaPath)) {
-            const tiendaData = JSON.parse(fs.readFileSync(tiendaPath, 'utf-8'));
-            productosServidor = tiendaData.productos || [];
+            tiendaData = JSON.parse(fs.readFileSync(tiendaPath, 'utf-8'));
         }
     } catch (e) {
-        return res.status(500).json({ success: false, mensaje: 'Error interno al verificar productos.' });
+        console.log("Error leyendo tienda.json");
     }
 
-    // 3. Obtener carrito del cliente
-    const carritoCliente = req.body.carrito;
-    if (!Array.isArray(carritoCliente)) {
-        return res.status(400).json({ success: false, mensaje: 'Formato de carrito incorrecto.' });
-    }
-
-    // 4. Lógica de Validación de Precios
-    let precioManipulado = false;
-    let productoManipulado = '';
-
-    for (const itemCliente of carritoCliente) {
-        const productoReal = productosServidor.find(p => p.id === itemCliente.id);
-
-        if (!productoReal) {
-            precioManipulado = true;
-            productoManipulado = `(ID: ${itemCliente.id} no existe)`;
-            break;
-        }
-        
-        if (itemCliente.price !== productoReal.precio) {
-            precioManipulado = true;
-            productoManipulado = `${productoReal.nombre} (Cliente: $${itemCliente.price} vs Servidor: $${productoReal.precio})`;
-            break;
-        }
-    }
-
-    // 5. Responder al cliente
-    if (precioManipulado) {
-        console.warn(`VALIDACIÓN FALLIDA: Precio manipulado detectado para ${productoManipulado}`);
-        return res.json({ 
-            success: false, 
-            mensaje: `¡Alerta de seguridad! El precio de ${productoManipulado} no es correcto. Pedido cancelado.` 
-        });
-    } else {
-        console.log("VALIDACIÓN EXITOSA: Todos los precios son correctos.");
-        return res.json({ 
-            success: true, 
-            mensaje: '¡Pedido validado! Compra realizada con éxito.' 
-        });
-    }
+    // Devolver token fijo + tienda
+    res.json({
+        success: true,
+        token: TOKEN,
+        productos: tiendaData.productos,
+        categorias: tiendaData.categorias
+    });
 });
 
+// ----------------------------------------------------------
+// VALIDAR CARRITO
+// ----------------------------------------------------------
+app.post('/api/validar-carrito', validarToken, (req, res) => {
+    const carritoCliente = req.body.carrito;
+    if (!Array.isArray(carritoCliente)) {
+        return res.status(400).json({ success: false, mensaje: "Carrito inválido" });
+    }
 
-// Iniciar servidor
+    // Cargar productos del servidor
+    const tiendaPath = path.join(__dirname, 'back', 'data', 'tienda.json');
+    const tiendaData = JSON.parse(fs.readFileSync(tiendaPath, 'utf-8'));
+    const productosServidor = tiendaData.productos;
+
+    let productoManipulado = null;
+
+    for (const item of carritoCliente) {
+        const real = productosServidor.find(p => p.id === item.id);
+        if (!real) {
+            productoManipulado = `(ID inexistente ${item.id})`;
+            break;
+        }
+        if (item.price !== real.precio) {
+            productoManipulado = `${real.nombre}: cliente ${item.price} / servidor ${real.precio}`;
+            break;
+        }
+    }
+
+    if (productoManipulado) {
+        return res.json({
+            success: false,
+            mensaje: `Precio manipulado detectado: ${productoManipulado}`
+        });
+    }
+
+    res.json({ success: true, mensaje: 'Compra validada correctamente' });
+});
+
+// ----------------------------------------------------------
 app.listen(PORT, () => {
     console.log(`Servidor escuchando en http://localhost:${PORT}`);
 });

@@ -27,10 +27,10 @@ window.removerDelCarrito = (id) => {
     renderCart();
 };
 
-
 // --- Carga de Datos ---
 const { productos } = loadStoreData();
-const token = getLocalStorage('token');
+// Usamos el token manual fijo
+const token = 'MiTokenSuperSecreto123';
 
 // --- Lógica de Renderizado de Carrito (Función local) ---
 function renderCart() {
@@ -159,7 +159,6 @@ async function handleCheckout() {
          if (loadingSpinner) loadingSpinner.style.display = 'none';
     }
 }
-
 
 // --- INICIALIZACIÓN DE LA PÁGINA DE CARRITO ---
 document.addEventListener('DOMContentLoaded', () => {
