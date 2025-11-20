@@ -120,7 +120,7 @@ body {
 .category-card {
     // CORRECCIÓN: Usamos el $secondary (gris claro) del JS, pero
     // aseguramos que el fondo de la tarjeta sea blanco ($light)
-    background-color: $light !important; 
+    background-color: lightgray !important; 
     border-bottom: 4px solid $primary; // Acento naranja
     box-shadow: 0 5px 15px rgba($dark, 0.05); 
     

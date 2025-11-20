@@ -11844,7 +11844,7 @@ body {
 }
 
 .category-card {
-  background-color: #FFFFFF !important;
+  background-color: lightgray !important;
   border-bottom: 4px solid rgb(46, 150, 199);
   box-shadow: 0 5px 15px rgba(52, 58, 64, 0.05);
 }
