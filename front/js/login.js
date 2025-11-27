@@ -33,8 +33,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 const data = await response.json();
 
                 if (data.success) {
-                    // Guardamos el token fijo
-                    setLocalStorage('token', 'MiTokenSuperSecreto123');
+
+                    // 👉 Guardamos AQUÍ el token real que manda el servidor
+                    localStorage.setItem('token', data.token);   // 🔥 sin JSON.stringify
+
 
                     // Guardamos los datos de tienda
                     setLocalStorage(TIENDA_KEY, {
