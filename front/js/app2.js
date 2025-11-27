@@ -1,17 +1,17 @@
-// front/js/app2.js (antes utils.js)
+// front/js/app2.js
 
-// --- CONSTANTES COMPARTIDAS ---
+// --- CONSTANTES ---
 export const TIENDA_KEY = 'tienda_data_json';
 export const CARRITO_KEY = 'carrito';
 export const VISTOS_KEY = 'productos_vistos';
 
-// --- HELPERS DE LOCALSTORAGE ---
+// --- LOCALSTORAGE ---
 export function getLocalStorage(key) {
     try {
         const item = localStorage.getItem(key);
         return item ? JSON.parse(item) : null;
     } catch (e) {
-        console.error(`Error al leer de LocalStorage (${key}):`, e);
+        console.error(`Error al leer LocalStorage (${key}):`, e);
         return null;
     }
 }
@@ -20,7 +20,7 @@ export function setLocalStorage(key, value) {
     try {
         localStorage.setItem(key, JSON.stringify(value));
     } catch (e) {
-        console.error(`Error al guardar en LocalStorage (${key}):`, e);
+        console.error(`Error al guardar LocalStorage (${key}):`, e);
     }
 }
 
@@ -32,11 +32,11 @@ export function loadStoreData() {
     return { productos, categorias };
 }
 
-// --- SEGURIDAD Y AUTENTICACIÓN ---
+// --- AUTENTICACIÓN ---
 export function checkAuth() {
-    const token = localStorage.getItem("token");  // 🔥 sin JSON.parse
+    const token = getLocalStorage('token');
     if (!token) {
-        window.location.href = "/paginas/login.html";
+        window.location.href = '/paginas/login.html';
         return false;
     }
     return true;
@@ -50,11 +50,10 @@ export function handleLogout() {
     window.location.href = '/paginas/login.html';
 }
 
-// --- LÓGICA DE CARRITO ---
+// --- CARRITO ---
 export function renderCartBadge() {
     const cartBadge = document.getElementById('cart-count-badge');
     if (!cartBadge) return;
-
     const carrito = getLocalStorage(CARRITO_KEY) || [];
     const totalItems = carrito.reduce((sum, item) => sum + item.quantity, 0);
 
@@ -66,31 +65,28 @@ export function renderCartBadge() {
     }
 }
 
-export function agregarAlCarrito(productId) {
+// Agrega producto completo al carrito
+export function agregarAlCarrito(producto) {
     let carrito = getLocalStorage(CARRITO_KEY) || [];
-    const existingProductIndex = carrito.findIndex(p => p.id === productId);
+    const existingIndex = carrito.findIndex(p => p.id === producto.id);
 
-    if (existingProductIndex > -1) {
-        carrito[existingProductIndex].quantity++;
+    if (existingIndex > -1) {
+        carrito[existingIndex].quantity++;
     } else {
-        carrito.push({ id: productId, quantity: 1 });
+        carrito.push({ ...producto, quantity: 1 });
     }
-    
+
     setLocalStorage(CARRITO_KEY, carrito);
     renderCartBadge();
-
-    if (!document.getElementById('cart-items-container')) {
-        alert('Producto añadido al carrito');
-    }
 }
 
+// Disminuye cantidad
 export function disminuirCantidad(productId) {
     let carrito = getLocalStorage(CARRITO_KEY) || [];
-    const existingProductIndex = carrito.findIndex(p => p.id === productId);
-
-    if (existingProductIndex > -1) {
-        carrito[existingProductIndex].quantity--;
-        if (carrito[existingProductIndex].quantity <= 0) {
+    const index = carrito.findIndex(p => p.id === productId);
+    if (index > -1) {
+        carrito[index].quantity--;
+        if (carrito[index].quantity <= 0) {
             carrito = carrito.filter(p => p.id !== productId);
         }
         setLocalStorage(CARRITO_KEY, carrito);
@@ -98,6 +94,7 @@ export function disminuirCantidad(productId) {
     }
 }
 
+// Remueve producto
 export function removerDelCarrito(productId) {
     let carrito = getLocalStorage(CARRITO_KEY) || [];
     carrito = carrito.filter(p => p.id !== productId);
@@ -105,14 +102,12 @@ export function removerDelCarrito(productId) {
     renderCartBadge();
 }
 
+// Producto visto
 export function verProducto(productId) {
     let vistos = getLocalStorage(VISTOS_KEY) || [];
-    
     vistos = vistos.filter(id => id !== productId);
     vistos.unshift(productId);
-
     if (vistos.length > 10) vistos.pop();
-    
     setLocalStorage(VISTOS_KEY, vistos);
     window.location.href = `/paginas/producto.html?id=${productId}`;
 }
