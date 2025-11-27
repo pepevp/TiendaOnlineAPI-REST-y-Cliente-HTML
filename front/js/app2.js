@@ -1,17 +1,15 @@
 // front/js/app2.js
 
-// --- CONSTANTES ---
 export const TIENDA_KEY = 'tienda_data_json';
 export const CARRITO_KEY = 'carrito';
 export const VISTOS_KEY = 'productos_vistos';
 
-// --- LOCALSTORAGE ---
 export function getLocalStorage(key) {
     try {
         const item = localStorage.getItem(key);
         return item ? JSON.parse(item) : null;
     } catch (e) {
-        console.error(`Error al leer LocalStorage (${key}):`, e);
+        console.error(`Error leyendo LocalStorage (${key})`, e);
         return null;
     }
 }
@@ -20,19 +18,18 @@ export function setLocalStorage(key, value) {
     try {
         localStorage.setItem(key, JSON.stringify(value));
     } catch (e) {
-        console.error(`Error al guardar LocalStorage (${key}):`, e);
+        console.error(`Error guardando LocalStorage (${key})`, e);
     }
 }
 
-// --- CARGA DE DATOS ---
 export function loadStoreData() {
     const tiendaData = getLocalStorage(TIENDA_KEY) || {};
-    const productos = Array.isArray(tiendaData.productos) ? tiendaData.productos : [];
-    const categorias = Array.isArray(tiendaData.categorias) ? tiendaData.categorias : [];
-    return { productos, categorias };
+    return {
+        productos: Array.isArray(tiendaData.productos) ? tiendaData.productos : [],
+        categorias: Array.isArray(tiendaData.categorias) ? tiendaData.categorias : []
+    };
 }
 
-// --- AUTENTICACIÓN ---
 export function checkAuth() {
     const token = getLocalStorage('token');
     if (!token) {
@@ -50,10 +47,10 @@ export function handleLogout() {
     window.location.href = '/paginas/login.html';
 }
 
-// --- CARRITO ---
 export function renderCartBadge() {
     const cartBadge = document.getElementById('cart-count-badge');
     if (!cartBadge) return;
+
     const carrito = getLocalStorage(CARRITO_KEY) || [];
     const totalItems = carrito.reduce((sum, item) => sum + item.quantity, 0);
 
@@ -65,36 +62,41 @@ export function renderCartBadge() {
     }
 }
 
-// Agrega producto completo al carrito
-export function agregarAlCarrito(producto) {
-    let carrito = getLocalStorage(CARRITO_KEY) || [];
-    const existingIndex = carrito.findIndex(p => p.id === producto.id);
+// --- FUNCIONES DE CARRITO ---
 
-    if (existingIndex > -1) {
-        carrito[existingIndex].quantity++;
+// Agrega producto completo al carrito (guarda precio, nombre, imagen, etc)
+export function agregarAlCarrito(productId) {
+    const { productos } = loadStoreData();
+    const producto = productos.find(p => p.id === productId);
+    if (!producto) return;
+
+    let carrito = getLocalStorage(CARRITO_KEY) || [];
+    const index = carrito.findIndex(p => p.id === productId);
+
+    if (index > -1) {
+        carrito[index].quantity++;
     } else {
-        carrito.push({ ...producto, quantity: 1 });
+        carrito.push({ ...producto, quantity: 1 }); // <-- guardamos toda la info del producto
     }
 
     setLocalStorage(CARRITO_KEY, carrito);
     renderCartBadge();
 }
 
-// Disminuye cantidad
 export function disminuirCantidad(productId) {
     let carrito = getLocalStorage(CARRITO_KEY) || [];
     const index = carrito.findIndex(p => p.id === productId);
+
     if (index > -1) {
         carrito[index].quantity--;
         if (carrito[index].quantity <= 0) {
-            carrito = carrito.filter(p => p.id !== productId);
+            carrito.splice(index, 1);
         }
         setLocalStorage(CARRITO_KEY, carrito);
         renderCartBadge();
     }
 }
 
-// Remueve producto
 export function removerDelCarrito(productId) {
     let carrito = getLocalStorage(CARRITO_KEY) || [];
     carrito = carrito.filter(p => p.id !== productId);
@@ -102,7 +104,6 @@ export function removerDelCarrito(productId) {
     renderCartBadge();
 }
 
-// Producto visto
 export function verProducto(productId) {
     let vistos = getLocalStorage(VISTOS_KEY) || [];
     vistos = vistos.filter(id => id !== productId);
